@@ -1,8 +1,15 @@
-body {
-	margin:0px;
-	padding:0px;
+html {
+    position: relative;
+}
 
-	color: #484848;
-	font-size: 14px;
-	font-family: Circular,"Helvetica Neue",Helvetica,Arial,sans-serif;
+body {
+    font-family: Circular, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    justify-content: space-between;
+    flex-direction: column;
+    display: flex;
+    margin: 0;
+    padding: 0;
+    color: #484848;
+    min-height: 100vh;
 }
