@@ -1,1 +1,1 @@
-AirBnB clone - Web static
+This directory implements webpage design.
