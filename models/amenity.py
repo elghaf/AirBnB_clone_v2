@@ -1,19 +1,16 @@
 #!/usr/bin/python3
-"""
-module that creates amenity
-"""
+""" State Module for HBNB project """
+from models.base_model import BaseModel, Base
+from sqlalchemy import Column, String
+import os
+from sqlalchemy.orm import relationship
 
-from models.base_model import BaseModel
 
+class Amenity(BaseModel, Base):
+    """Amenity class"""
+    __tablename__ = 'amenities'
+    name = Column(String(128), nullable=False)
 
-class Amenity(BaseModel):
-    """class Amenity that inherits from BaseModel
-    """
-
-    name = ""
-
-    def __init__(self, *args, **kwargs):
-        """
-        creates new amenity
-        """
-        super().__init__(self, *args, **kwargs)
+    if os.getenv('HBNB_TYPE_STORAGE') == "db":
+        place_amenities = relationship("Place", secondary='place_amenity',
+                                       back_populates="amenities")

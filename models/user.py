@@ -1,23 +1,18 @@
 #!/usr/bin/python3
-"""
-module that creates users
-"""
-
-from models.base_model import BaseModel
+"""This module defines a class User"""
+from models.base_model import BaseModel, Base
+import os
+from sqlalchemy import Column, String
+from sqlalchemy.orm import relationship
 
 
 class User(BaseModel):
-    """
-    a class User that inherits from BaseModel
-    """
+    """This class defines a user by various attributes"""
+    __tablename__ = 'users'
+    email = Column(String(128), nullable=False)
+    password = Column(String(128), nullable=False)
+    first_name = Column(String(128))
+    last_name = Column(String(128))
 
-    email = ""
-    password = ""
-    first_name = ""
-    last_name = ""
-
-    def __init__(self, *args, **kwargs):
-        """
-        creates new user
-        """
-        super().__init__(self, *args, **kwargs)
+    places = relationship("Place", backref="user", cascade="all, delete")
+    reviews = relationship("Review", backref="user", cascade="all, delete")
