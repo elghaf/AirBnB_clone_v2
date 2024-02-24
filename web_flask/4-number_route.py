@@ -1,44 +1,42 @@
 #!/usr/bin/python3
 """
-A script that starts a Flask web application
+script that starts a Flask web application:
 listening on 0.0.0.0, port 5000
+with Fifth routes
 """
-from flask import Flask
-
-app = Flask("__name__")
+from flask import Flask, escape, request
+app = Flask(__name__)
 
 
 @app.route('/', strict_slashes=False)
 def hello():
-    """Function that displays Hello HBNB!"""
+    """ First Route that display Hello HBNB"""
     return "Hello HBNB!"
 
 
 @app.route('/hbnb', strict_slashes=False)
-def hbnb():
-    """Function that displays HBNB"""
+def hello_hbnb():
+    """ Second Route that display HBNB"""
     return "HBNB"
 
 
 @app.route('/c/<text>', strict_slashes=False)
-def ctext(text):
-    """Function that displays C followed by the value of the text variable"""
+def hello_text(text):
+    """ Third Route that display C and text"""
     return "C {}".format(text.replace("_", " "))
 
 
-@app.route('/python', strict_slashes=False)
+@app.route('/python', defaults={'text': 'is cool'}, strict_slashes=False)
 @app.route('/python/<text>', strict_slashes=False)
-def pythontext(text="is cool"):
-    """Function that displays Python followed by value of text variable"""
+def hello_python(text):
+    """ Fourth Route that display C and text """
     return "Python {}".format(text.replace("_", " "))
 
 
 @app.route('/number/<int:n>', strict_slashes=False)
-def isnum(n):
-    """Function that displays n is a number only if n is an integer"""
-    if isinstance(n, int):
-        return "{} is a number".format(n)
+def hello_number(n):
+    """ Fifth Route that display C and text """
+    return "%d is a number" % n
 
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=None)
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
