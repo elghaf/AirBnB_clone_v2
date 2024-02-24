@@ -1,37 +1,37 @@
 #!/usr/bin/python3
-"""A script that starts a Flask web application"""
-
+"""
+A script that starts a Flask web application
+listening on 0.0.0.0, port 5000
+"""
 from flask import Flask
 
-app = Flask(__name__)
-
-"""Defines the route"""
+app = Flask("__name__")
 
 
-@app.route("/", strict_slashes=False)
-def hello_world():
+@app.route('/', strict_slashes=False)
+def hello():
+    """Function that displays Hello HBNB!"""
     return "Hello HBNB!"
 
 
-@app.route("/hbnb", strict_slashes=False)
+@app.route('/hbnb', strict_slashes=False)
 def hbnb():
-    """return HBNB"""
+    """Function that displays HBNB"""
     return "HBNB"
 
 
 @app.route('/c/<text>', strict_slashes=False)
-def c_is_fun(text):
-    """Returns C followed by by the value of the text"""
-    return 'C ' + text.replace('_', ' ')
+def ctext(text):
+    """Function that displays C followed by the value of the text variable"""
+    return "C {}".format(text.replace("_", " "))
 
 
-@app.route('/python/')
+@app.route('/python', strict_slashes=False)
 @app.route('/python/<text>', strict_slashes=False)
-def python_with_text(text='is cool'):
-    """Returns “Python ”, followed by the value of the text variable"""
-    return 'Python ' + text.replace('_', ' ')
+def pythontext(text="is cool"):
+    """Function that displays Python followed by value of text variable"""
+    return "Python {}".format(text.replace("_", " "))
 
 
-if __name__ == '__main__':
-    """Starts the flask development server"""
-    app.run(host='0.0.0.0', port=5000)
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000, debug=None)

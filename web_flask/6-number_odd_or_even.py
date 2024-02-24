@@ -1,64 +1,58 @@
 #!/usr/bin/python3
 """
-    Sript that starts a Flask web application
- """
+A script that starts a Flask web application
+listening on 0.0.0.0, port 5000
+"""
 from flask import Flask, render_template
+
 app = Flask(__name__)
 
 
 @app.route('/', strict_slashes=False)
-def hello_hbn():
-    """
-        function to return Hello HBNB!
-    """
+def hello():
+    """Function that displays Hello HBNB!"""
     return "Hello HBNB!"
 
 
 @app.route('/hbnb', strict_slashes=False)
 def hbnb():
-    """
-        function to return HBNB
-    """
+    """Function that displays HBNB"""
     return "HBNB"
 
 
 @app.route('/c/<text>', strict_slashes=False)
-def text_var(text):
-    """
-        function to display text variable passed in
-    """
+def ctext(text):
+    """Function that displays C followed by the value of the text variable"""
     return "C {}".format(text.replace("_", " "))
 
 
+@app.route('/python', strict_slashes=False)
 @app.route('/python/<text>', strict_slashes=False)
-def text_var_python(text="is cool"):
-    """
-        function to display text variable, with default "is cool"
-    """
+def pythontext(text="is cool"):
+    """Function that displays Python followed by value of text variable"""
     return "Python {}".format(text.replace("_", " "))
 
 
 @app.route('/number/<int:n>', strict_slashes=False)
-def var_num(n):
-        """
-             function to display a variable, but only if an int
-        """
+def isnum(n):
+    """Function that displays n is a number only if n is an integer"""
+    if isinstance(n, int):
         return "{} is a number".format(n)
 
 
 @app.route('/number_template/<int:n>', strict_slashes=False)
-def var_num_template(n):
-        """
-            function to display number in html page
-        """
-        return render_template("5-number.html", n=n)
+def number_template(n):
+    """Function that displays an HTML page only if n is an integer"""
+    if isinstance(n, int):
+        return render_template("5-number.html", value=n)
 
 
 @app.route('/number_odd_or_even/<int:n>', strict_slashes=False)
-def var_num_even_odd(n):
-        """
-            function to display even or odd number
-        """
-        return render_template("6-number_odd_or_even.html", n=n)
-if __name__ == '__main__':
-        app.run(host='0.0.0.0', port=5000)
+def number_odd_or_even(n):
+    """Function that displays an HTML page only if n is an int(even/odd)"""
+    if isinstance(n, int):
+        return (render_template("6-number_odd_or_even.html", value=n))
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)

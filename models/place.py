@@ -1,23 +1,27 @@
 #!/usr/bin/python3
 """ Place Module for HBNB project """
 from models.base_model import BaseModel, Base
-from models.temp import HBNB_TYPE_STORAGE, DB
-from os import getenv
-from sqlalchemy import String, Column, ForeignKey, Integer, Float, Table
+from sqlalchemy import Column, String, ForeignKey, Integer, Float
 from sqlalchemy.orm import relationship
+from models.review import Review
+from sqlalchemy.sql.schema import Table
+from models.amenity import Amenity
+from os import getenv
 
-place_amenity = Table('place_amenity', Base.metadata,
-                      Column('place_id', String(60), ForeignKey('places.id'),
-                             primary_key=True, nullable=False),
-                      Column('amenity_id', String(60),
-                             ForeignKey('amenities.id'),
-                             primary_key=True, nullable=False))
+if getenv("HBNB_TYPE_STORAGE") == 'db':
+    place_amenity = Table('place_amenity', Base.metadata,
+                          Column('place_id', String(60),
+                                 ForeignKey('places.id'),
+                                 primary_key=True, nullable=False),
+                          Column('amenity_id', String(60),
+                                 ForeignKey('amenities.id'),
+                                 primary_key=True, nullable=False))
 
 
 class Place(BaseModel, Base):
     """ A place to stay """
     __tablename__ = 'places'
-    if getenv(HBNB_TYPE_STORAGE) == DB:
+    if getenv("HBNB_TYPE_STORAGE") == 'db':
         city_id = Column(String(60), ForeignKey('cities.id'), nullable=False)
         user_id = Column(String(60), ForeignKey('users.id'), nullable=False)
         name = Column(String(128), nullable=False)
@@ -31,9 +35,7 @@ class Place(BaseModel, Base):
         reviews = relationship('Review', backref='place',
                                cascade='all, delete, delete-orphan')
         amenities = relationship('Amenity', secondary=place_amenity,
-                                 viewonly=False,
-                                 back_populates='place_amenities')
-
+                                 viewonly=False, backref='place_amenities')
     else:
         city_id = ""
         user_id = ""
@@ -48,32 +50,31 @@ class Place(BaseModel, Base):
         amenity_ids = []
 
         @property
-        def reviews(self) -> list:
-            '''Return list of reviews'''
+        def reviews(self):
+            """returns list of review instances with place_id"""
             from models import storage
-            from models.review import Review
-
-            list_reviews = []
-            for review in storage.all(Review).values():
+            all_reviews = storage.all(Review)
+            r_list = []
+            for review in all_reviews.values():
                 if review.place_id == self.id:
-                    list_reviews.append(review)
-            return list_reviews
+                    r_list.append(review)
+            return r_list
 
         @property
-        def amenities(self) -> list:
-            '''Get amenity list'''
+        def amenities(self):
+            """returns the list of Amenity instances"""
             from models import storage
-            from models.amenity import Amenity
-
-            list_amenities = []
-            for amnty in storage.all(Amenity).values():
-                if amnty.id in self.amenity_ids:
-                    list_amenities.append(amnty)
-            return list_amenities
+            all_amenities = storage.all(Amenity)
+            a_list = []
+            for amenity in all_amenities.values():
+                if amenity.id in self.amenity_ids:
+                    a_list.append(amenity)
+            return a_list
 
         @amenities.setter
-        def amenities(self, amenity=None) -> None:
-            '''Set amenity list'''
-
-            if amenity:
-                self.amenity_ids.append(amenity.id)
+        def amenities(self, obj):
+            """method for adding an Amenity.id to the"""
+            if obj is not None:
+                if isinstance(obj, Amenity):
+                    if obj.id not in self.amenity_ids:
+                        self.amenity_ids.append(obj.id)

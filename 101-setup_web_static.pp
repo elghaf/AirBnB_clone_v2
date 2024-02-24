@@ -1,23 +1,18 @@
-#This Setups the web servers for the deployment of web_static
-
-# Nginx configuration file
+# Redo the task #0 but by using Puppet:
 $nginx_conf = "server {
     listen 80 default_server;
     listen [::]:80 default_server;
     add_header X-Served-By ${hostname};
     root   /var/www/html;
     index  index.html index.htm;
-
     location /hbnb_static {
         alias /data/web_static/current;
         index index.html index.htm;
     }
-
     location /redirect_me {
-        return 301 https://youtube.com/watch?v=QH2-TGUlwu4;
+        return 301 http://onepunchcoder.medium.com;
     }
-
-    error_page 404 /custom_404.html;
+    error_page 404 /404.html;
     location /404 {
       root /var/www/html;
       internal;
@@ -27,65 +22,65 @@ $nginx_conf = "server {
 package { 'nginx':
   ensure   => 'present',
   provider => 'apt'
-} ->
+}
 
-file { '/data':
+-> file { '/data':
   ensure  => 'directory'
-} ->
+}
 
-file { '/data/web_static':
+-> file { '/data/web_static':
   ensure => 'directory'
-} ->
+}
 
-file { '/data/web_static/releases':
+-> file { '/data/web_static/releases':
   ensure => 'directory'
-} ->
+}
 
-file { '/data/web_static/releases/test':
+-> file { '/data/web_static/releases/test':
   ensure => 'directory'
-} ->
+}
 
-file { '/data/web_static/shared':
+-> file { '/data/web_static/shared':
   ensure => 'directory'
-} ->
+}
 
-file { '/data/web_static/releases/test/index.html':
+-> file { '/data/web_static/releases/test/index.html':
   ensure  => 'present',
-  content => "Testing web static deployment\n"
-} ->
+  content => "this webpage is found in data/web_static/releases/test/index.htm \n"
+}
 
-file { '/data/web_static/current':
+-> file { '/data/web_static/current':
   ensure => 'link',
   target => '/data/web_static/releases/test'
-} ->
+}
 
-exec { 'chown -R ubuntu:ubuntu /data/':
+-> exec { 'chown -R ubuntu:ubuntu /data/':
   path => '/usr/bin/:/usr/local/bin/:/bin/'
 }
 
 file { '/var/www':
   ensure => 'directory'
-} ->
+}
 
-file { '/var/www/html':
+-> file { '/var/www/html':
   ensure => 'directory'
-} ->
+}
 
-file { '/var/www/html/index.html':
+-> file { '/var/www/html/index.html':
   ensure  => 'present',
-  content => "Hello World!\n"
-} ->
+  content => "Do hard things  in /var/www/index.html***\n"
+}
 
-file { '/var/www/html/404.html':
+-> file { '/var/www/html/404.html':
   ensure  => 'present',
-  content => "Ceci n'est pas une page\n"
-} ->
+  content => "Ceci n'est pas une page - Error page\n"
+}
 
-file { '/etc/nginx/sites-available/default':
+-> file { '/etc/nginx/sites-available/default':
   ensure  => 'present',
   content => $nginx_conf
-} ->
+}
 
-exec { 'nginx restart':
+-> exec { 'nginx restart':
   path => '/etc/init.d/'
 }

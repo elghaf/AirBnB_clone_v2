@@ -1,41 +1,32 @@
 #!/usr/bin/python3
-"""
-fcreates and distributes an archive to your web servers, using deploy():
-"""
-
-import os.path
+"""A module that deploys archives on web servers"""
+from fabric.api import local, env, put, run
 from datetime import datetime
-from fabric.api import env, local, put, run
+import os
 
-
-env.hosts = ["54.237.218.228", "34.203.75.52"]
+env.hosts = ['3.90.70.66', '100.26.231.45']
 
 
 def do_pack():
-    """Archives the static files."""
-    cur_time = datetime.now()
-    output = "versions/web_static_{}{}{}{}{}{}.tgz".format(
-        cur_time.year,
-        cur_time.month,
-        cur_time.day,
-        cur_time.hour,
-        cur_time.minute,
-        cur_time.second
-    )
+    """A function that generates .tgz archive from contents of web_static"""
+    dt = datetime.utcnow()
+    file = "versions/web_static_{}{}{}{}{}{}.tgz".format(dt.year,
+                                                         dt.month,
+                                                         dt.day,
+                                                         dt.hour,
+                                                         dt.minute,
+                                                         dt.second)
     if os.path.isdir("versions") is False:
         if local("mkdir -p versions").failed is True:
             return None
-    if local("tar -cvzf {} web_static".format(output)).failed is True:
+    if local("tar -cvzf {} web_static".format(file)).failed is True:
         return None
-    return output
+    return file
 
 
 def do_deploy(archive_path):
-    """Deploys the static files to the host servers.
-    Args:
-        archive_path (str): The path to the archived static files.
-    """
-    if not os.path.exists(archive_path):
+    """Function to distribute an archive to web servers"""
+    if os.path.isfile(archive_path) is False:
         return False
     file = archive_path.split("/")[-1]
     name = file.split(".")[0]
@@ -68,10 +59,8 @@ def do_deploy(archive_path):
 
 
 def deploy():
-    """
-    Archives and deploys the static files to the host servers.
-    """
-    output = do_pack()
-    if output is None:
+    """Function that deploys archives"""
+    file = do_pack()
+    if file is None:
         return False
-    return do_deploy(output)
+    return do_deploy(file)
