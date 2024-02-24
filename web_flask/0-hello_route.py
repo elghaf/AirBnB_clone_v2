@@ -1,11 +1,9 @@
 #!/usr/bin/python3
-""" 0. Script to start a Flask web application """
+""" Script to start a Flask web application """
 
 from flask import Flask
 
-
 app = Flask(__name__)
-
 
 @app.route('/', strict_slashes=False)
 def hello_world():
@@ -13,8 +11,8 @@ def hello_world():
     return 'Hello HBNB!'
 
 @app.route('/airbnb-onepage', strict_slashes=False)
-def hello_world():
-    """ Returns some text. """
+def hello_airbnb():
+    """ Returns some text for the airbnb-onepage route. """
     return 'Hello HBNB!'
 
 if __name__ == '__main__':
